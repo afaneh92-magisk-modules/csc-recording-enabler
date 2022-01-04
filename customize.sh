@@ -30,22 +30,22 @@ add_csc_feature() {
   feature=$1
   value=$2
   lineNumber=0
-  lineNumber=`sed -n "/<${feature}>.*<\/${feature}>/=" $MODPATH/$omc_path/cscfeature.xml`
+  lineNumber=`sed -n "/<${feature}>.*<\/${feature}>/=" $MODPATH/$i`
   if [ $lineNumber > 0 ] ; then
-    echo "- Found feature $feature in line $lineNumber and changing it to ${value} in $omc_path/cscfeature.xml"
-    sed -i "${lineNumber} c<${feature}>${value}<\/${feature}>" $MODPATH/$omc_path/cscfeature.xml
+    echo "- Found feature $feature in line $lineNumber and changing it to ${value} in $i"
+    sed -i "${lineNumber} c<${feature}>${value}<\/${feature}>" $MODPATH/$i
   else
-    echo "- Adding feature $feature to the feature set in $omc_path/cscfeature.xml"
-    sed -i "/<\/FeatureSet>/i \   \ <${feature}>${value}<\/${feature}>" $MODPATH/$omc_path/cscfeature.xml
+    echo "- Adding feature $feature to the feature set in $i"
+    sed -i "/<\/FeatureSet>/i \   \ <${feature}>${value}<\/${feature}>" $MODPATH/$i
   fi
 }
 
 # Paths
 omc_path=`getprop persist.sys.omc_path`
-original_files=`find $omc_path -type f -name '*.xml'`
+original_files=`find $omc_path -type f -name 'cscfeature.xml'`
 
 # Your script starts here
-ui_print "- copy omc files"
+ui_print "- Copy omc files"
 mkdir -p $MODPATH/$omc_path
 cp -aR $omc_path/* $MODPATH/$omc_path
 ui_print "- Start decodeing..."
@@ -54,11 +54,12 @@ for i in $original_files; do
     ui_print "- Not decoded $i!"
   else
     ui_print "- Successfully decoded $i!"
+    # Add CSC Features
+    add_csc_feature CscFeature_VoiceCall_ConfigRecording RecordingAllowed
   fi
 done
 
-add_csc_feature CscFeature_VoiceCall_ConfigRecording RecordingAllowed
-
+# Change Module OMC Path
 sed -i "s~omc\_path~$omc_path~g" $MODPATH/post-fs-data.sh;
 
 # Set executable permissions
