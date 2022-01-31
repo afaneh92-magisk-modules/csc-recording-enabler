@@ -42,6 +42,8 @@ add_csc_feature() {
 
 # Paths
 omc_path=`getprop persist.sys.omc_path`
+mdc_path=`getprop mdc.system.path`
+[ -z "$mdc_path" ] || omc_path=$mdc_path
 original_files=`find $omc_path -type f -name 'cscfeature.xml'`
 
 # Your script starts here
