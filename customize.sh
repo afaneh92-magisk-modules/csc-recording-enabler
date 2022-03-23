@@ -51,12 +51,15 @@ ui_print "- Copy omc files"
 mkdir -p $MODPATH/$omc_path
 cp -aR $omc_path/* $MODPATH/$omc_path
 ui_print "- Start decodeing..."
+xml_pattern="<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 for i in $original_files; do
   if `run_jar "$MODPATH/omc-decoder.jar" -i $MODPATH/$i -o $MODPATH/$i` ; then
     ui_print "- Not decoded $i!"
   else
     ui_print "- Successfully decoded $i!"
-    # Add CSC Features
+  fi
+  # Add CSC Features if decoded
+  if `grep -Fxq "$xml_pattern" $MODPATH/$i` ; then
     add_csc_feature CscFeature_VoiceCall_ConfigRecording RecordingAllowed
   fi
 done
