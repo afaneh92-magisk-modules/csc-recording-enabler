@@ -9,6 +9,13 @@ umask 022
 # echo before loading util_functions
 ui_print() { echo "$1"; }
 
+require_magisk_app() {
+  ui_print "**********************************"
+  ui_print " Please install using Magisk app! "
+  ui_print "**********************************"
+  exit 1
+}
+
 require_new_magisk() {
   ui_print "*******************************"
   ui_print " Please install Magisk v19.0+! "
@@ -22,6 +29,8 @@ require_new_magisk() {
 
 OUTFD=$2
 ZIPFILE=$3
+
+[ "$(getprop ro.twrp.boot)" == "1" ] && require_magisk_app
 
 mount /data 2>/dev/null
 
